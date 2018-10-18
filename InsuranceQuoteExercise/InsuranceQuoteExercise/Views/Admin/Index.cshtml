@@ -1,0 +1,45 @@
+﻿@using InsuranceQuoteExercise.ViewModels
+@model List<UserinfoVm>
+
+
+<div class="row no-gutters m-3">
+    <div class="card col-sm-12 col-md-10 col-lg-6 mx-auto shadow">
+        <div class="card-header text-center">
+            <h4 class="m-0">Insurance Quotes</h4>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h6 class="card-header">First Name</h6>
+            </div>
+            <div class="col">
+                <h6 class="card-header">Last Name</h6>
+            </div>
+            <div class="col">
+                <h6 class="card-header">Email Address</h6>
+            </div>
+            <div class="col">
+                <h6 class="card-header">Total</h6>
+            </div>
+        </div>
+        <div class="card-body">
+            @foreach (var userinfo in Model)
+            {
+                <div class="row mb-3">
+                    <div class="col">
+                        @userinfo.FirstName
+                    </div>
+                    <div class="col">
+                        @userinfo.LastName
+                    </div>
+                    <div class="col">
+                        @userinfo.EmailAddress
+                    </div>
+                    <div class="col">
+                        $@userinfo.Total
+                    </div>
+                </div>
+                <hr />
+            }
+        </div>
+    </div>
+</div>
