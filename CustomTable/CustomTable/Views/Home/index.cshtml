@@ -1,0 +1,127 @@
+﻿<script src="~/Scripts/knockout-3.4.2.js"></script>
+
+<h1>Create you own Table!</h1>
+<br />
+<h4>Type in your data to have a custom table generated for you.</h4>
+<br />
+
+<p style="font-weight:bold;">Table Name: <input data-bind="value: typeName, valueUpdate: 'afterkeydown'" /> <button data-bind="click: addTableName, enable: tableName().length < 1 && typeName()">Add Title</button></p>
+
+<p style="font-weight:bold;">Column Name: <input data-bind="value: typeColumn, valueUpdate: 'afterkeydown'" /> <button data-bind="click: addColumn, enable: tableName().length > 0 && typeColumn()">Add Column</button></p>
+<p> # of Columns: (<span data-bind="text: tableData().length"></span>) &nbsp; &nbsp; | &nbsp; &nbsp; # of Data entries: (<span data-bind="text: viewData.rows().length"></span>)</p>
+<br />
+
+<div data-bind="visible: tableName().length > 0" style="margin-bottom:20px;">
+    <p style="float:right;">
+        <input style="width:100px; margin-bottom:3px;" type="text" name="color1" id="color1" placeholder="Page Color" /> <br />
+        <input style="width:100px;" type="text" name="color2" id="color2" placeholder="Table Color" />
+        <button type="button" onclick="javascript:changeBGC()">Change Background Color</button> <br />
+        (For double words type in with no space [example: LightGreen])
+    </p>
+    <button data-bind="click: clear" style="height:60px; width:100px; font-size:18px;">Clear Table</button>
+</div>
+
+<div id="tbl">
+    <!-- ko foreach: tableName--> <!--foreach used to hide border around table name until added-->
+    <div style="border-top:2px solid; border-right: 2px solid; border-left: 2px solid; margin-bottom: -10px;">
+        <h1 class="text-center" style="padding-bottom: 15px; font-size:50px; font-weight: bold; text-decoration:underline;"> <span data-bind="text: $data"></span></h1>
+    </div>
+    <!-- /ko -->
+
+    <table class="table" style="border-bottom:2px solid black;">
+        <tbody>
+            <tr data-bind="foreach: tableData">
+                <th style="border-top:2px solid black; border-right: 2px solid black; border-left: 2px solid black;">
+                    <center><h1 data-bind="text: name"></h1></center> <br />
+                    <div class="text-center" style="border-top:2px solid black; border-bottom: 2px solid black; margin: 0px -10px -10px -10px; padding: 10px 0px 0px 5px;">
+                        <input data-bind="value: viewData.typeData" style="margin-bottom:5px;" /> <button data-bind="click: addData">Add Row</button>
+                    </div>
+                    <!-- ko foreach: row -->
+
+                    <center>
+                        <h2 style="list-style-type:none; height:100px; border-bottom: 2px solid black; margin: 0px -10px -10px -10px; padding-top: 30px; padding-bottom: 30px;">
+                            <span data-bind="text: $data"></span>
+                        </h2>
+                    </center>
+                    <!-- /ko -->
+                </th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<button data-bind="click: viewData.viewJson, visible: tableName().length > 0">View data in JSON format</button> <button data-bind="click: viewData.hideJson, visible: viewData.showJson">Hide</button>
+<pre data-bind="text: ko.toJSON($root, null, 3), visible: viewData.showJson"></pre>
+
+
+<script type="text/javascript">
+    function TableInfo(name, row) {
+        this.name = name;
+        this.row = ko.observableArray(row);
+
+        this.addData = function () {
+            this.row.push(viewData.typeData());
+            viewData.typeData("");
+            viewData.rows.push("");
+        }.bind(this);
+    }
+
+    function changeBGC(color) {
+        document.body.style.backgroundColor = document.getElementById('color1').value;
+        document.getElementById("tbl").style.backgroundColor = document.getElementById('color2').value;
+    }
+
+    var viewModel = {
+
+        tableName: ko.observableArray(),
+
+        typeName: ko.observable(),
+
+        typeColumn: ko.observable(),
+
+        tableData: ko.observableArray(),
+
+        
+        addTableName: function () {
+            this.tableName.push(this.typeName());
+        },
+
+
+        addColumn: function () {
+            this.tableData.push(new TableInfo(this.typeColumn()));
+            this.typeColumn("");
+        },
+
+        
+
+        clear: function () {
+            this.tableName.removeAll();
+            this.typeName("");
+            this.typeColumn("");
+            this.tableData.removeAll();
+            viewData.rows.removeAll();
+            viewData.showJson(false);
+            document.body.style.backgroundColor = "white";
+            document.getElementById("tbl").style.backgroundColor = "white";
+            document.getElementById("color1").value = "";
+            document.getElementById("color2").value = "";
+        },
+
+    }
+
+    var viewData = {
+        showJson: ko.observable(false),
+        rows: ko.observableArray(),
+        typeData: ko.observable(),
+
+        viewJson: function () {
+            viewData.showJson(true);
+        },
+
+        hideJson: function () {
+            viewData.showJson(false);
+        }
+    }
+
+    ko.applyBindings(viewModel);
+</script>
